@@ -5,9 +5,9 @@ from tqdm import tqdm
 from time import sleep
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-p', metavar='', type=str, help='Enter of file to log') #Ввод пути файла где искать
-parser.add_argument('-s', metavar='', type=str, help='Enter word to find') #Ввод маски по которй искать
-args = parser.parse_args()                                                 #Разбивка введенных значений
+parser.add_argument('-p', metavar='', type=str, help='Enter of file to log')                #Ввод пути файла где искать
+parser.add_argument('-s', metavar='', type=str, help='Enter word to find')                  #Ввод маски по которй искать
+args = parser.parse_args()                                                                  #Разбивка введенных значений
 
 path = args.p
 in_SMask = args.s
