@@ -10,8 +10,8 @@ args = parser.parse_args()                                                      
 
 path = args.p
 in_s_mask = args.s
-ex_mask = re.compile(r"(.*\.+log)|(.*\.+txt)", re.IGNORECASE)
-n = 1
+ex_mask = re.compile(r"(.*\.+log)|(.*\.+txt)", re.IGNORECASE)                               #маска для определения расширения файла
+n = 1                                                                                       #Переменная счетчика обработанных файлов
 
 def search (in_SMask, file):                                                                #поиск по маске в каждой строчке
     s_mask = re.compile(in_SMask)
@@ -39,6 +39,6 @@ else:                                                                           
                 with open(os.path.join(path, file_dir), mode='r', encoding='utf-8') as file:        #открывается файл для чтения
                     search(in_s_mask, file)                                                      #Запуск функции поиска
                 n = int(n)
-                n += 1
+                n += 1                                                                      #Счетчик обработанных файлов
     else:                                                                                   #Если файла к которому указан путь не существует
         print('This directory not found')
