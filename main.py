@@ -2,7 +2,6 @@ import os
 import re
 import argparse
 from tqdm import tqdm
-from time import sleep
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-p', metavar='', type=str, help='Enter of file to log')                #Ввод пути файла где искать
@@ -10,38 +9,36 @@ parser.add_argument('-s', metavar='', type=str, help='Enter word to find')      
 args = parser.parse_args()                                                                  #Разбивка введенных значений
 
 path = args.p
-in_SMask = args.s
-Fpath, ext = os.path.splitext(path)
-pPath1, pPath2 = os.path.split(path)
-print(pPath1)
-for k in tqdm(range(100), desc='Find'):                                                     #прогресс бар
-    sleep(.1)
+in_s_mask = args.s
+ex_mask = re.compile(r"(.*\.+log)|(.*\.+txt)", re.IGNORECASE)
+n = 1
 
 def search (in_SMask, file):                                                                #поиск по маске в каждой строчке
-    SMask = re.compile(in_SMask)
+    s_mask = re.compile(in_SMask)
     line = file.readlines()
-    for i in line:
-        if SMask.search(i):
-            oFile.write(i)
+    for k in tqdm(line, desc='Search in File' + n):                                         #прогресс бар
+        for i in line:
+            if s_mask.search(i):
+                o_file.write(i)
 
-if ext == '.log' or ext == '.txt':                                                          #если указан путь к файлу
+if ex_mask.search(path):                                                          #если указан путь к файлу
      if os.path.exists(path):                                                               #Если файл существует
-        file = open(path, mode='r', encoding='utf-8')                                       #открывается файл для чтения
-        oFile = open(pPath1 + r'.\Findlog.txt', mode='w', encoding='utf-8')                 #Открывается или создается файл для записи найденых строк
-        search(in_SMask, file)                                                              #Запуск функции поиска
-        file.close()                                                                        #Закрывается исходный файл
-        oFile.close()                                                                       #Закрывается файл с найдеными строками
+        n = str(n)
+        with open(path, mode='r', encoding='utf-8') as file:                                      #открывается файл для чтения
+            with open(r'.\FindLog.txt', mode='w', encoding='utf-8') as o_file:                          #Открывается или создается файл для записи найденых строк
+                search(in_s_mask, file)                                                              #Запуск функции поиска
      else:
         print('This file not found')                                                        #Если файла к которому указан путь не существует
 else:                                                                                       #Если указан путь к директории
     if os.path.exists(path):                                                                #Если дирректория существует
-        oFile = open(Fpath + r'.\FindLog.txt', mode='w', encoding='utf-8')                  #Открывается или создается файл для записи найденых строк
-        for filedir in os.listdir(path):                                                    #перебираются все файлы в дирректории
-            if filedir.endswith('.txt') or filedir.endswith('.log'):                        #если файл тектовый
-                file = open(os.path.join(path, filedir), mode='r', encoding='utf-8')        #открывается файл для чтения
-                search(in_SMask, file)                                                      #Запуск функции поиска
-                file.close()                                                                #Закрывается исходный файл
-        oFile.close()                                                                       #Закрывается файл с найдеными строками
-
+        with open(r'.\FindLog.txt', mode='w', encoding='utf-8') as o_file:                        #Открывается или создается файл для записи найденых строк
+            for file_dir in os.listdir(path):                                                    #перебираются все файлы в дирректории
+                if not ex_mask.search(file_dir):                                            #если файл тектовый
+                    continue
+                n = str(n)
+                with open(os.path.join(path, file_dir), mode='r', encoding='utf-8') as file:        #открывается файл для чтения
+                    search(in_s_mask, file)                                                      #Запуск функции поиска
+                n = int(n)
+                n += 1
     else:                                                                                   #Если файла к которому указан путь не существует
         print('This directory not found')
